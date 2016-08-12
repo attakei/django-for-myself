@@ -27,4 +27,5 @@ RUN groupadd -r -g 1000 $user \
 USER $user
 WORKDIR $appDir
 ONBUILD ADD ./ $appDir
+ONBUILD RUN chown $user:$user $appDir
 RUN sudo chown -R $user:$user .
