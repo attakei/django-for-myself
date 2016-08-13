@@ -24,8 +24,7 @@ RUN groupadd -r -g 1000 $user \
     && chown $user:$user $dataDir
 
 # Entry
-USER $user
-WORKDIR $appDir
-ONBUILD ADD ./ $appDir
-ONBUILD RUN chown $user:$user $appDir
-RUN sudo chown -R $user:$user .
+USER service
+WORKDIR /app
+ONBUILD ADD ./ /app
+ONBUILD RUN sudo chown service:service -R /app
