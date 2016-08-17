@@ -8,3 +8,11 @@
 * JobQueue/Worker by Celery
 * Web design by Bootstrap3
 * DotEnv boot
+
+
+## Directory structures
+
+- /app
+    - Django application source
+- /data
+    - Django output data
