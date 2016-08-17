@@ -1,9 +1,6 @@
 FROM python:3.5-slim
 MAINTAINER attakei
 
-ARG deps="mysql-client"
-ARG buildDeps="gcc libmysqlclient-dev"
-
 # Install sudo
 RUN set -x \
     && apt-get update \
@@ -26,7 +23,7 @@ ADD ./pip-ext /usr/bin/pip-ext
 ADD ./repos.yml /tmp/repos.yml
 
 # Install pip packages
-RUN pip-ext --repo /tmp/repos.yml mysql
+RUN pip-ext --repo /tmp/repos.yml --all
 
 
 # Entry

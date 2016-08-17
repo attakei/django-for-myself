@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 """Pip install with apt-get install
 """
-
-
 import sys
 import argparse
 import subprocess
@@ -25,6 +23,8 @@ def main(args):
     packages = ['common'] + args.assets
     with open(args.repo, 'r') as fp:
         repo = yaml.load(fp)
+    if args.all:
+        packages = ['common'] + list(repo.keys())
     pypi, deps, buildDeps = fetch_packages(repo, packages)
     subprocess.run(['apt-get', 'update'], stdout=sys.stdout)
     apt_get_cmd = ['apt-get', 'install', '-y'] + deps + buildDeps + ['--no-install-recommends']
