@@ -7,3 +7,4 @@
 * Google OAuth2 login support by Python-Social-Auth
 * JobQueue/Worker by Celery
 * Web design by Bootstrap3
+* DotEnv boot
