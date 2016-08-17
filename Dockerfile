@@ -20,14 +20,14 @@ RUN groupadd -r -g 1000 service \
     && mkdir /data \
     && chown service:service /data
 
+# Packaging tools
+RUN pip install PyYAML
+ADD ./pip-ext /usr/bin/pip-ext
+ADD ./repos.yml /tmp/repos.yml
+
 # Install pip packages
-ADD ./requirements.txt /tmp/requirements.txt
-RUN set -x \
-    && apt-get update \
-    && apt-get install -y $deps $buildDeps --no-install-recommends \
-    && rm -rf /var/lib/apt/lists/* \
-    && pip install -r /tmp/requirements.txt \
-    && apt-get purge -y --auto-remove $buildDeps
+RUN pip-ext --repo /tmp/repos.yml mysql
+
 
 # Entry
 USER service
