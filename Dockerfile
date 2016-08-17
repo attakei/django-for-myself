@@ -1,6 +1,15 @@
 FROM python:3.5-slim
-ARG deps="sudo mysql-client"
+MAINTAINER attakei
+
+ARG deps="mysql-client"
 ARG buildDeps="gcc libmysqlclient-dev"
+
+# Install sudo
+RUN set -x \
+    && apt-get update \
+    && apt-get install -y sudo --no-install-recommends \
+    && rm -rf /var/lib/apt/lists/*
+# TODO: Install apt-utils ?
 
 # Working user and directory
 RUN groupadd -r -g 1000 service \
