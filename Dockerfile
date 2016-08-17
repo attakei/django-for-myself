@@ -25,7 +25,6 @@ ADD ./repos.yml /tmp/repos.yml
 # Install pip packages
 RUN pip-ext --repo /tmp/repos.yml --all
 
-
 # Entry
 USER service
 WORKDIR /app

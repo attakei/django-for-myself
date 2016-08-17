@@ -2,11 +2,14 @@ common:
   pypi:
     - Django==1.9.7
     - requests==2.10.0
-    - django-bootstrap3==7.0.1
     - celery==3.1.23
-    - python-social-auth==0.2.19
     - uwsgi==2.0.13.1
     - django-dotenv==1.4.1
+websrvice:
+  pypi:
+    - django-google-analytics==2
+    - django-bootstrap3==7.0.1
+    - python-social-auth==0.2.19
 mysql:
   pypi:
     - mysqlclient==1.3.7
