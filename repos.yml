@@ -7,7 +7,7 @@ common:
     - django-dotenv==1.4.1
 websrvice:
   pypi:
-    - django-google-analytics==2
+    - django-analytical==2.2.1
     - django-bootstrap3==7.0.1
     - python-social-auth==0.2.19
 mysql:
