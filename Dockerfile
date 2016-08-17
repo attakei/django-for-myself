@@ -6,7 +6,7 @@ RUN set -x \
     && apt-get update \
     && apt-get install -y sudo --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
-# TODO: Install apt-utils ?
+    # TODO: Install apt-utils ?
 
 # Working user and directory
 RUN groupadd -r -g 1000 service \
@@ -31,3 +31,6 @@ USER service
 WORKDIR /app
 ONBUILD ADD ./ /app
 ONBUILD RUN sudo chown service:service -R /app
+
+# Default command is 'runserver'
+CMD ./manage.py runserver
