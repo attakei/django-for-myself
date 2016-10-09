@@ -1,12 +1,6 @@
 FROM python:3.5-slim
-MAINTAINER attakei
+MAINTAINER Kazuya Takei<attakei@gmail.com>
 
-# Install sudo
-RUN set -x \
-    && apt-get update \
-    && apt-get install -y sudo --no-install-recommends \
-    && rm -rf /var/lib/apt/lists/*
-    # TODO: Install apt-utils ?
 
 # Working user and directory
 RUN groupadd -r -g 1000 service \
@@ -20,16 +14,25 @@ RUN groupadd -r -g 1000 service \
 # Packaging tools
 RUN pip install PyYAML
 ADD ./pip-ext /usr/bin/pip-ext
-ADD ./repos.yml /tmp/repos.yml
+ADD ./repos.yml /usr/lib/repos.yml
 
-# Install pip packages
-RUN pip-ext --repo /tmp/repos.yml --all
+# Install django package
+ARG django_version="1.9"
+RUN pip-ext ver${django_version}
 
-# Entry
-USER service
-WORKDIR /app
+# Install option packages
+ARG extra=""
+RUN if [ "$extra" != "" ] ; then pip-ext ${extra} ; fi
+    
+
+# ONBUILD RUN pip-ext --repo /usr/lib/repos.yml
 ONBUILD ADD ./ /app
-ONBUILD RUN sudo chown service:service -R /app
+ONBUILD RUN chown service:service -R /app
+ONBUILD RUN if [ -f /app/requirements.txt ] ; then \
+        pip -r requirements.txt \
+    ; fi
 
 # Default command is 'runserver'
-CMD ./manage.py runserver
+# USER service
+# ENTRYPOINT ["python3", "/app/manage.py"]
+CMD ["pip", "freeze"]

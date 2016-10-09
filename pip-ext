@@ -13,34 +13,36 @@ def fetch_packages(repo, packages):
     packages_deps = []
     packages_build = []
     for package in packages:
-        packages_pypi += repo.get(package, []).get('pypi', [])
-        packages_deps += repo.get(package, []).get('deps', [])
-        packages_build += repo.get(package, []).get('buildDeps', [])
+        packages_pypi += repo.get(package, {}).get('pypi', [])
+        packages_deps += repo.get(package, {}).get('deps', [])
+        packages_build += repo.get(package, {}).get('buildDeps', [])
     return packages_pypi, packages_deps, packages_build
 
 
 def main(args):
-    packages = ['common'] + args.assets
+    packages = args.assets
     with open(args.repo, 'r') as fp:
         repo = yaml.load(fp)
-    if args.all:
-        packages = ['common'] + list(repo.keys())
     pypi, deps, buildDeps = fetch_packages(repo, packages)
-    subprocess.run(['apt-get', 'update'], stdout=sys.stdout)
-    apt_get_cmd = ['apt-get', 'install', '-y'] + deps + buildDeps + ['--no-install-recommends']
-    subprocess.run(apt_get_cmd, stdout=sys.stdout)
-    with open('/tmp/requirements.txt', 'w') as fp:
-        fp.write('\n'.join(pypi))
-    subprocess.run(['pip', 'install', '-r', '/tmp/requirements.txt'], stdout=sys.stdout)
-    apt_get_cmd = ['apt-get', 'purge', '-y', '--auto-remove'] + buildDeps
-    subprocess.run(apt_get_cmd, stdout=sys.stdout)
+    if len(deps + buildDeps) > 0:
+        subprocess.run(['apt-get', 'update'], stdout=sys.stdout)
+        apt_get_cmd = ['apt-get', 'install', '-y'] + deps + buildDeps + ['--no-install-recommends']
+        subprocess.run(apt_get_cmd, stdout=sys.stdout)
+    if len(pypi) > 0:
+        with open('/tmp/requirements.txt', 'w') as fp:
+            fp.write('\n'.join(pypi))
+        subprocess.run(['pip', 'install', '-r', '/tmp/requirements.txt'], stdout=sys.stdout)
+    else:
+        print('no packages')
+    if len(buildDeps) > 0:
+        apt_get_cmd = ['apt-get', 'purge', '-y', '--auto-remove'] + buildDeps
+        subprocess.run(apt_get_cmd, stdout=sys.stdout)
     shutil.rmtree('/var/lib/apt/lists/', ignore_errors=True)
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--repo', type=str)
+parser.add_argument('--repo', type=str, default='/usr/lib/repos.yml')
 parser.add_argument('assets', nargs='*')
-parser.add_argument('--all', action='store_true', default=False)
 
 
 if __name__ == '__main__':
